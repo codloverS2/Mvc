@@ -143,6 +143,23 @@ namespace Microsoft.Extensions.DependencyInjection
             return conventions;
         }
 
+        public static PageConventionCollection Add(this PageConventionCollection conventions, IPropertyModelBaseConvention convention)
+        {
+            if (conventions == null)
+            {
+                throw new ArgumentNullException(nameof(conventions));
+            }
+
+            if (convention == null)
+            {
+                throw new ArgumentNullException(nameof(convention));
+            }
+
+            var adapter = new PropertyModelConventionAdapter(convention);
+            conventions.Add(convention);
+            return conventions;
+        }
+
         /// <summary>
         /// Adds a <see cref="AllowAnonymousFilter"/> to all pages under the specified area folder.
         /// </summary>
@@ -460,6 +477,22 @@ namespace Microsoft.Extensions.DependencyInjection
                     }
                 });
             };
+        }
+
+        private class PropertyModelConventionAdapter : IPagePropertyModelConvention
+        {
+            private readonly IPropertyModelBaseConvention _convention;
+
+            public PropertyModelConventionAdapter(IPropertyModelBaseConvention convention)
+            {
+                _convention = convention;
+            }
+
+            public void Apply(PagePropertyModel model)
+            {
+                _convention.Apply(model);
+            }
+
         }
     }
 }

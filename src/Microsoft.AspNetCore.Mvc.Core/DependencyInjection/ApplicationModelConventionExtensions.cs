@@ -129,6 +129,30 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Adds a <see cref="IParameterModelBaseConvention"/> to all the parameters in the application.
+        /// </summary>
+        /// <param name="conventions">The list of <see cref="IApplicationModelConvention"/>
+        /// in <see cref="AspNetCore.Mvc.MvcOptions"/>.</param>
+        /// <param name="parameterModelConvention">The <see cref="IParameterModelBaseConvention"/> which needs to be
+        /// added.</param>
+        public static void Add(
+            this IList<IApplicationModelConvention> conventions,
+            IParameterModelBaseConvention parameterModelConvention)
+        {
+            if (conventions == null)
+            {
+                throw new ArgumentNullException(nameof(conventions));
+            }
+
+            if (parameterModelConvention == null)
+            {
+                throw new ArgumentNullException(nameof(parameterModelConvention));
+            }
+
+            conventions.Add(new ParameterApplicationModelConvention(parameterModelConvention));
+        }
+
+        /// <summary>
         /// Adds a <see cref="IPropertyModelConvention"/> to all the parameters in the application.
         /// </summary>
         /// <param name="conventions">The list of <see cref="IApplicationModelConvention"/>
@@ -152,18 +176,44 @@ namespace Microsoft.Extensions.DependencyInjection
             conventions.Add(new PropertyApplicationModelConvention(propertyModelConvention));
         }
 
+        /// <summary>
+        /// Adds a <see cref="IPropertyModelConvention"/> to all the parameters in the application.
+        /// </summary>
+        /// <param name="conventions">The list of <see cref="IApplicationModelConvention"/>
+        /// in <see cref="AspNetCore.Mvc.MvcOptions"/>.</param>
+        /// <param name="propertyModelBaseConvention">The <see cref="IPropertyModelConvention"/> which needs to be
+        /// added.</param>
+        public static void Add(
+            this IList<IApplicationModelConvention> conventions,
+            IPropertyModelBaseConvention propertyModelBaseConvention)
+        {
+            if (conventions == null)
+            {
+                throw new ArgumentNullException(nameof(conventions));
+            }
+
+            if (propertyModelBaseConvention == null)
+            {
+                throw new ArgumentNullException(nameof(propertyModelBaseConvention));
+            }
+
+            conventions.Add(new PropertyApplicationModelConvention(propertyModelBaseConvention));
+        }
+
         private class ParameterApplicationModelConvention : IApplicationModelConvention
         {
             private readonly IParameterModelConvention _parameterModelConvention;
 
+            private readonly IParameterModelBaseConvention _parameterBaseModelConvention;
+
             public ParameterApplicationModelConvention(IParameterModelConvention parameterModelConvention)
             {
-                if (parameterModelConvention == null)
-                {
-                    throw new ArgumentNullException(nameof(parameterModelConvention));
-                }
-
                 _parameterModelConvention = parameterModelConvention;
+            }
+
+            public ParameterApplicationModelConvention(IParameterModelBaseConvention parameterModelBaseConvention)
+            {
+                _parameterBaseModelConvention = parameterModelBaseConvention;
             }
 
             /// <inheritdoc />
@@ -185,7 +235,14 @@ namespace Microsoft.Extensions.DependencyInjection
                         var parameters = action.Parameters.ToArray();
                         foreach (var parameter in parameters)
                         {
-                            _parameterModelConvention.Apply(parameter);
+                            if (_parameterModelConvention != null)
+                            {
+                                _parameterModelConvention.Apply(parameter);
+                            }
+                            else if (_parameterBaseModelConvention != null)
+                            {
+                                _parameterBaseModelConvention.Apply(parameter);
+                            }
                         }
                     }
                 }
@@ -261,10 +318,16 @@ namespace Microsoft.Extensions.DependencyInjection
         private class PropertyApplicationModelConvention : IApplicationModelConvention
         {
             private readonly IPropertyModelConvention _propertyModelConvention;
+            private readonly IPropertyModelBaseConvention _propertyModelBaseConvention;
 
             public PropertyApplicationModelConvention(IPropertyModelConvention propertyModelConvention)
             {
                 _propertyModelConvention = propertyModelConvention ?? throw new ArgumentNullException(nameof(propertyModelConvention));
+            }
+
+            public PropertyApplicationModelConvention(IPropertyModelBaseConvention propertyModelBaseConvention)
+            {
+                _propertyModelBaseConvention = propertyModelBaseConvention ?? throw new ArgumentNullException(nameof(propertyModelBaseConvention));
             }
 
             /// <inheritdoc />
@@ -283,7 +346,14 @@ namespace Microsoft.Extensions.DependencyInjection
                     var properties = controller.ControllerProperties.ToArray();
                     foreach (var property in properties)
                     {
-                        _propertyModelConvention.Apply(property);
+                        if (_propertyModelConvention != null)
+                        {
+                            _propertyModelConvention.Apply(property);
+                        }
+                        else
+                        {
+                            _propertyModelBaseConvention.Apply(property);
+                        }
                     }
                 }
             }

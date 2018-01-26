@@ -13,7 +13,7 @@ namespace Microsoft.AspNetCore.Mvc.ApplicationModels
     /// A type which is used to represent a property in a <see cref="ControllerModel"/>.
     /// </summary>
     [DebuggerDisplay("PropertyModel: Name={PropertyName}")]
-    public class PropertyModel : ICommonModel, IBindingModel
+    public class PropertyModel : PropertyModelBase
     {
         /// <summary>
         /// Creates a new instance of <see cref="PropertyModel"/>.
@@ -62,31 +62,5 @@ namespace Microsoft.AspNetCore.Mvc.ApplicationModels
         /// Gets or sets the <see cref="ControllerModel"/> this <see cref="PropertyModel"/> is associated with.
         /// </summary>
         public ControllerModel Controller { get; set; }
-
-        /// <summary>
-        /// Gets any attributes which are annotated on the property.
-        /// </summary>
-        public IReadOnlyList<object> Attributes { get; }
-
-        public IDictionary<object, object> Properties { get; }
-
-        MemberInfo ICommonModel.MemberInfo => PropertyInfo;
-
-        string ICommonModel.Name => PropertyName;
-
-        /// <summary>
-        /// Gets or sets the <see cref="BindingInfo"/> associated with this model.
-        /// </summary>
-        public BindingInfo BindingInfo { get; set; }
-
-        /// <summary>
-        /// Gets the underlying <see cref="PropertyInfo"/>.
-        /// </summary>
-        public PropertyInfo PropertyInfo { get; }
-
-        /// <summary>
-        /// Gets or sets the name of the property represented by this model.
-        /// </summary>
-        public string PropertyName { get; set; }
     }
 }

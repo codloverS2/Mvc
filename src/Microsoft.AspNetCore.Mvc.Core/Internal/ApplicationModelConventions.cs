@@ -84,6 +84,16 @@ namespace Microsoft.AspNetCore.Mvc.Internal
                         {
                             parameterConvention.Apply(parameter);
                         }
+
+                        var parameterBaseConventions =
+                            parameter.Attributes
+                                .OfType<IParameterModelBaseConvention>()
+                                .ToArray();
+
+                        foreach (var parameterConvention in parameterBaseConventions)
+                        {
+                            parameterConvention.Apply(parameter);
+                        }
                     }
                 }
 

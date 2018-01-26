@@ -101,6 +101,12 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
                 {
                     convention.Apply(propertyModel);
                 }
+
+                var propertyModelBaseConventions = GetConventions<IPropertyModelBaseConvention>(propertyModel.Attributes);
+                foreach (var convention in propertyModelBaseConventions)
+                {
+                    convention.Apply(propertyModel);
+                }
             }
 
             IEnumerable<TConvention> GetConventions<TConvention>(

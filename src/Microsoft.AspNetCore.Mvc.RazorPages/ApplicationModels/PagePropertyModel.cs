@@ -13,7 +13,7 @@ namespace Microsoft.AspNetCore.Mvc.ApplicationModels
     /// Represents a property in a <see cref="PageApplicationModel"/>.
     /// </summary>
     [DebuggerDisplay("PagePropertyModel: Name={PropertyName}")]
-    public class PagePropertyModel : ICommonModel, IBindingModel
+    public class PagePropertyModel : PropertyModelBase
     {
         /// <summary>
         /// Creates a new instance of <see cref="PagePropertyModel"/>.
@@ -52,32 +52,5 @@ namespace Microsoft.AspNetCore.Mvc.ApplicationModels
         /// Gets or sets the <see cref="PageApplicationModel"/> this <see cref="PagePropertyModel"/> is associated with.
         /// </summary>
         public PageApplicationModel Page { get; set; }
-
-        /// <summary>
-        /// Gets any attributes which are annotated on the property.
-        /// </summary>
-        public IReadOnlyList<object> Attributes { get; }
-
-        /// <inheritdoc />
-        public IDictionary<object, object> Properties { get; }
-
-        /// <summary>
-        /// Gets or sets the <see cref="BindingInfo"/> associated with this model.
-        /// </summary>
-        public BindingInfo BindingInfo { get; set; }
-
-        /// <summary>
-        /// Gets the underlying <see cref="PropertyInfo"/>.
-        /// </summary>
-        public PropertyInfo PropertyInfo { get; }
-
-        /// <summary>
-        /// Gets or sets the name of the property represented by this model.
-        /// </summary>
-        public string PropertyName { get; set; }
-
-        MemberInfo ICommonModel.MemberInfo => PropertyInfo;
-
-        string ICommonModel.Name => PropertyName;
     }
 }

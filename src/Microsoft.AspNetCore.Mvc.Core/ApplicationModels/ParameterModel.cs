@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 namespace Microsoft.AspNetCore.Mvc.ApplicationModels
 {
     [DebuggerDisplay("ParameterModel: Name={ParameterName}")]
-    public class ParameterModel : ICommonModel, IBindingModel
+    public class ParameterModel : ParameterModelBase
     {
         public ParameterModel(
             ParameterInfo parameterInfo,
@@ -47,19 +47,5 @@ namespace Microsoft.AspNetCore.Mvc.ApplicationModels
         }
 
         public ActionModel Action { get; set; }
-
-        public IReadOnlyList<object> Attributes { get; }
-
-        public IDictionary<object, object> Properties { get; }
-
-        MemberInfo ICommonModel.MemberInfo => ParameterInfo.Member;
-
-        string ICommonModel.Name => ParameterName;
-
-        public ParameterInfo ParameterInfo { get; }
-
-        public string ParameterName { get; set; }
-
-        public BindingInfo BindingInfo { get; set; }
     }
 }
